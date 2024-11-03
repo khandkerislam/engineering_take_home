@@ -10,16 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_11_03_113448) do
+ActiveRecord::Schema[7.2].define(version: 2024_11_03_202939) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "buildings", force: :cascade do |t|
+    t.string "address", null: false
+    t.bigint "client_id", null: false
+    t.bigint "zip_code_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "client_id", null: false
-    t.string "address", null: false
     t.index ["client_id"], name: "index_buildings_on_client_id"
+    t.index ["zip_code_id"], name: "index_buildings_on_zip_code_id"
   end
 
   create_table "clients", force: :cascade do |t|
@@ -29,15 +31,18 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_03_113448) do
   end
 
   create_table "custom_fields", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "value_type", null: false
+    t.string "enum_options"
+    t.bigint "client_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "client_id", null: false
     t.index ["client_id"], name: "index_custom_fields_on_client_id"
   end
 
   create_table "states", force: :cascade do |t|
-    t.string "name"
-    t.string "code"
+    t.string "name", null: false
+    t.string "code", limit: 2, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["code"], name: "index_states_on_code", unique: true
@@ -45,8 +50,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_03_113448) do
   end
 
   create_table "zip_codes", force: :cascade do |t|
-    t.string "code"
-    t.string "city"
+    t.string "code", null: false
+    t.string "city", null: false
     t.bigint "state_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -55,6 +60,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_03_113448) do
   end
 
   add_foreign_key "buildings", "clients"
+  add_foreign_key "buildings", "zip_codes"
   add_foreign_key "custom_fields", "clients"
   add_foreign_key "zip_codes", "states"
 end
