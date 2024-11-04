@@ -48,6 +48,8 @@ group :development, :test do
   gem 'factory_bot_rails'
   gem 'faker'
 
+  gem 'pry-byebug'
+
   gem 'shoulda-matchers'
 end
 
