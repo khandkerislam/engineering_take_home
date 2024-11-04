@@ -10,7 +10,7 @@ class CreateInitialSchema < ActiveRecord::Migration[7.2]
     add_index :states, :code, unique: true
 
     create_table :zip_codes do |t|
-      t.string :code, null: false
+      t.integer :code, null: false
       t.string :city, null: false
       t.references :state, null: false, foreign_key: true
 

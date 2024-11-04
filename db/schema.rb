@@ -50,7 +50,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_03_202939) do
   end
 
   create_table "zip_codes", force: :cascade do |t|
-    t.string "code", null: false
+    t.integer "code", null: false
     t.string "city", null: false
     t.bigint "state_id", null: false
     t.datetime "created_at", null: false

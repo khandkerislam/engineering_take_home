@@ -12,7 +12,7 @@ Client.destroy_all
 Building.destroy_all
 
 va_state = State.find_or_create_by!(name: 'Virginia', code: 'VA')
-va_zip_code = ZipCode.find_or_create_by!(code: 22312, state: va_state)
+va_zip_code = ZipCode.find_or_create_by!(code: 22312, state: va_state, city: 'Alexandria')
 
 # Create 5 clients
 clients = [
