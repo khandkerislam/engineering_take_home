@@ -26,8 +26,8 @@ class CreateInitialSchema < ActiveRecord::Migration[7.2]
 
     create_table :custom_fields do |t|
       t.string :name, null: false
-      t.string :value_type, null: false
-      t.string :enum_options
+      t.integer :field_type, null: false
+      t.json :enum_options
       t.references :client, null: false, foreign_key: true
 
       t.timestamps
