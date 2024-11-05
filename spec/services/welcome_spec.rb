@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe 'Welcome', type: :service do
   it 'adds 1 + 1' do

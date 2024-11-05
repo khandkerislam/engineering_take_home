@@ -21,6 +21,18 @@ services:
       - "3000:3000"
     depends_on:
       - db
+  test:
+    build: .
+    volumes:
+      - .:/app
+    environment:
+      RAILS_ENV: test
+      DB_HOST: db
+      DB_NAME: engineering_take_home_test
+      DB_USERNAME: app
+      DB_PASSWORD: takehome
+    depends_on:
+      - db
 
 volumes:
   postgres_data: {}

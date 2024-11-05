@@ -1,1 +1,2 @@
-alias dcrr="docker compose exec web"
+alias perchweb="docker compose exec web"
+alias perchtest="docker compose run --rm test"
