@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :zip_code do
     code { 22312 }
-    state { create(:state) }
+    state { State.first || association(:state) }
     city { 'Alexandria' }
   end
 end
