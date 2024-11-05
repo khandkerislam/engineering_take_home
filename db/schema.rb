@@ -14,6 +14,16 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_03_202939) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "building_custom_values", force: :cascade do |t|
+    t.string "value", null: false
+    t.bigint "building_id", null: false
+    t.bigint "custom_field_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["building_id"], name: "index_building_custom_values_on_building_id"
+    t.index ["custom_field_id"], name: "index_building_custom_values_on_custom_field_id"
+  end
+
   create_table "buildings", force: :cascade do |t|
     t.string "address", null: false
     t.bigint "client_id", null: false
@@ -59,6 +69,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_03_202939) do
     t.index ["state_id"], name: "index_zip_codes_on_state_id"
   end
 
+  add_foreign_key "building_custom_values", "buildings"
+  add_foreign_key "building_custom_values", "custom_fields"
   add_foreign_key "buildings", "clients"
   add_foreign_key "buildings", "zip_codes"
   add_foreign_key "custom_fields", "clients"

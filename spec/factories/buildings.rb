@@ -1,5 +1,7 @@
 FactoryBot.define do
   factory :building do
-    name { "Default Building" }
+    address { "123 Beauregard St" }
+    association :client
+    association :zip_code
   end
 end
