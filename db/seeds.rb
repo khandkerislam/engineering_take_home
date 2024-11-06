@@ -14,6 +14,10 @@ Rails.logger.info "Clearing existing data..."
 Rails.logger.info "Creating location data..."
 va_state = State.find_or_create_by!(name: 'Virginia', code: 'VA')
 va_zip_code = ZipCode.find_or_create_by!(code: 22312, state: va_state, city: 'Alexandria')
+ny_state = State.find_or_create_by!(name: 'New York', code: 'NY')
+ny_zip_code = ZipCode.find_or_create_by!(code: 10001, state: ny_state, city: 'New York')
+ca_state = State.find_or_create_by!(name: 'California', code: 'CA')
+ca_zip_code = ZipCode.find_or_create_by!(code: 90001, state: ca_state, city: 'Los Angeles')
 
 clients = [
   Client.new(name: 'Larchmont Properties'), 
@@ -21,12 +25,11 @@ clients = [
   Client.new(name: 'Landmark Development')
 ]
 buildings = [
-  Building.new(address: '123 Beauregard St', zip_code: va_zip_code, client: clients[0]), 
-  Building.new(address: '456 Duke St', zip_code: va_zip_code, client: clients[0]),
-  Building.new(address: '789 Seminary Rd', zip_code: va_zip_code, client: clients[1]),
-  Building.new(address: '321 King St', zip_code: va_zip_code, client: clients[1]),
-  Building.new(address: '555 Little River Tpke', zip_code: va_zip_code, client: clients[2])
+  *(20.times.map { |i| Building.new(address: "#{100 + i} Madison Ave", zip_code: ny_zip_code, client: clients[0]) }),
+  *(20.times.map { |i| Building.new(address: "#{100 + i} Beauregard St", zip_code: va_zip_code, client: clients[1]) }),
+  *(20.times.map { |i| Building.new(address: "#{100 + i} Hollywood Blvd", zip_code: ca_zip_code, client: clients[2]) }),
 ]
+
 custom_fields = [
   CustomField.new(name: 'Number of Floors', field_type: :number, client: clients[0]), 
   CustomField.new(name: 'Number of Units', field_type: :number, client: clients[0]),
@@ -35,14 +38,34 @@ custom_fields = [
   CustomField.new(name: 'Historical Notes', field_type: :string, client: clients[2])
 ]
 building_custom_values = [
-  BuildingCustomValue.new(building: buildings[0], custom_field: custom_fields[0], value: 3),
-  BuildingCustomValue.new(building: buildings[0], custom_field: custom_fields[1], value: 10),
-  BuildingCustomValue.new(building: buildings[1], custom_field: custom_fields[0], value: 4),
-  BuildingCustomValue.new(building: buildings[1], custom_field: custom_fields[1], value: 12),
-  BuildingCustomValue.new(building: buildings[2], custom_field: custom_fields[2], value: 'Residential'),
-  BuildingCustomValue.new(building: buildings[3], custom_field: custom_fields[2], value: 'Commercial'),
-  BuildingCustomValue.new(building: buildings[4], custom_field: custom_fields[3], value: 1950),
-  BuildingCustomValue.new(building: buildings[4], custom_field: custom_fields[4], value: 'Former bank building')
+  # For NY buildings (clients[0]) - Number of Floors and Units
+  *(20.times.flat_map do |i|
+    [
+      BuildingCustomValue.new(building: buildings[i], custom_field: custom_fields[0], value: rand(3..10)),
+      BuildingCustomValue.new(building: buildings[i], custom_field: custom_fields[1], value: rand(10..50))
+    ]
+  end),
+
+  # For VA buildings (clients[1]) - Building Type
+  *(20.times.map do |i|
+    BuildingCustomValue.new(
+      building: buildings[i + 20], 
+      custom_field: custom_fields[2], 
+      value: ['Residential', 'Commercial', 'Mixed Use'].sample
+    )
+  end),
+
+  # For CA buildings (clients[2]) - Year Built and Historical Notes
+  *(20.times.flat_map do |i|
+    [
+      BuildingCustomValue.new(building: buildings[i + 40], custom_field: custom_fields[3], value: rand(1920..2000)),
+      BuildingCustomValue.new(
+        building: buildings[i + 40], 
+        custom_field: custom_fields[4], 
+        value: ["Former bank building", "Historic landmark", "Renovated in 2010", "Original facade"].sample
+      )
+    ]
+  end)
 ]
 
 Rails.logger.info "Creating clients, buildings and custom fields..."
