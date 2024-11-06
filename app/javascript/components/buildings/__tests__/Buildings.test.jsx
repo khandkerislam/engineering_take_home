@@ -24,7 +24,13 @@ describe('Buildings', () => {
     useBuildings.mockReturnValue({
       buildings: mockBuildings,
       loading: false,
-      error: null
+      error: null,
+      pagination: {
+        current_page: 1,
+        total_pages: 1,
+        total_count: 1
+      },
+      setPage: jest.fn()
     });
   });
 
@@ -32,7 +38,7 @@ describe('Buildings', () => {
     render(<Buildings client={mockClient} />);
     
     expect(screen.getByText('Buildings for Test Client')).toBeInTheDocument();
-    expect(screen.getByText('Address: 123 Test St')).toBeInTheDocument();
-    expect(screen.getByText('customField: Test Value')).toBeInTheDocument();
+    expect(screen.getByText('123 Test St')).toBeInTheDocument();
+    expect(screen.getByText('Test Value')).toBeInTheDocument();
   });
 }); 

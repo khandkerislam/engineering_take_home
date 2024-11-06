@@ -12,7 +12,12 @@ describe('Clients', () => {
   const mockProps = {
     clients: [mockClient],
     onSelectClient: jest.fn(),
-    setAction: jest.fn()
+    setAction: jest.fn(),
+    pagination: {
+      current_page: 1,
+      total_pages: 1,
+      total_count: 1
+    }
   };
 
   it('renders client name and buttons', () => {

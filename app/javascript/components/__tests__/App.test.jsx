@@ -10,7 +10,7 @@ describe('App', () => {
     useClients.mockReturnValue({
       loading: true,
       error: null,
-      clients: []
+      clients: [],
     });
 
     render(<App />);
@@ -21,7 +21,7 @@ describe('App', () => {
     useClients.mockReturnValue({
       loading: false,
       error: 'Failed to fetch',
-      clients: []
+      clients: [],
     });
 
     render(<App />);
