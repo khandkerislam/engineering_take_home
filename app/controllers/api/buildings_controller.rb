@@ -46,7 +46,7 @@ module Api
 
     def update
       if @building.update(building_params.except(:custom_values))
-        @building.create_custom_values(building_params[:custom_values])
+        @building.update_custom_values(building_params[:custom_values])
         render json: @building, status: :ok
       else
         render json: { errors: @building.errors }, status: :unprocessable_entity
@@ -57,6 +57,7 @@ module Api
 
     def building_params
       params.require(:building).permit(
+        :id,
         :client_id,
         :address,
         :zip_code_id,

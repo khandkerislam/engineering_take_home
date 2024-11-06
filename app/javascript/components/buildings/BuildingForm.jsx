@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useZipCodes } from '../../hooks/useZipCodes'
 import CustomFieldsForm from './CustomFieldsForm'
 import './BuildingForm.css'
-export default function BuildingForm({ client, existingBuilding = null }) {
+export default function BuildingForm({ client, existingBuilding = null, onSuccess }) {
   const isEditMode = existingBuilding !== null
   const [building, setBuilding] = useState(() => {
     if (existingBuilding) {
@@ -49,6 +49,9 @@ export default function BuildingForm({ client, existingBuilding = null }) {
           zip_code_id: '',
           custom_values: {}
         })
+        if (onSuccess) {
+          onSuccess()
+        }
       } else {
         const data = await response.json()
         setSubmitError(data.errors)

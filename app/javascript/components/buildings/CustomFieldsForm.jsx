@@ -34,7 +34,7 @@ export default function CustomFieldsForm({ customFields, initialValues = {}, onS
             name={field.name}
             value={value}
             onChange={handleChange}
-            step="any" // Allow decimals
+            step="any" 
           />
         )
       

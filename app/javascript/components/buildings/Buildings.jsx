@@ -13,6 +13,11 @@ export default function Buildings({ client }) {
     return Object.entries(rest);
   };
 
+  const onSuccess = () => {
+    setEditBuilding(null);
+    fetchPage(pagination.currentPage);
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
   
@@ -30,7 +35,7 @@ export default function Buildings({ client }) {
                 <BuildingForm
                   client={client}
                   existingBuilding={building}
-                  onSuccess={() => setEditBuilding(null)}
+                  onSuccess={onSuccess}
                 />
                 <button 
                   onClick={() => setEditBuilding(null)}
