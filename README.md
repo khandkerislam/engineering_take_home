@@ -23,10 +23,26 @@ For convenience, source the alias to access the Rails container:
 source .aliases
 ```
 
-Seed the database with:
+## Database Setup
 
+1. Create the database:
+```bash
+perchweb rails db:create
 ```
+
+2. Run migrations:
+```bash
+perchweb rails db:migrate
+```
+
+3. Seed the database with initial data:
+```bash
 perchweb rails db:seed
+```
+
+4. (Optional) Reset database and reseed:
+```bash
+perchweb rails db:reset
 ```
 
 Run yarn, rails, and othercommands on the Rails container with:
