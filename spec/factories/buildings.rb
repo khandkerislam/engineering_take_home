@@ -7,9 +7,9 @@ FactoryBot.define do
     trait :with_custom_values do
       after(:create) do |building|
         building.client.custom_fields.each do |custom_field|
-          create(:building_custom_value, 
-            building: building, 
-            custom_field: custom_field, 
+          create(:building_custom_value,
+            building: building,
+            custom_field: custom_field,
             value: Faker::Lorem.word)
         end
       end

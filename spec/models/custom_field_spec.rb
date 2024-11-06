@@ -18,7 +18,7 @@ RSpec.describe CustomField, type: :model do
         expect(number_field.number?).to be true
         expect(list_field.list?).to be true
       end
-  
+
       it 'is invalid for invalid types' do
         field = build(:custom_field, field_type: 'invalid')
         expect(field).to be_invalid
@@ -26,8 +26,8 @@ RSpec.describe CustomField, type: :model do
       end
 
       context 'enum options validation' do
-        subject{ build(:custom_field, :list_type )}
-        
+        subject { build(:custom_field, :list_type) }
+
         it 'is invalid without blank enum_options' do
           subject.enum_options = nil
           expect(subject).to be_invalid
@@ -64,13 +64,13 @@ RSpec.describe CustomField, type: :model do
         end
 
         it 'is invalid with non-string elements' do
-          subject.enum_options = ['Valid', 123, true]
+          subject.enum_options = [ 'Valid', 123, true ]
           expect(subject).to be_invalid
           expect(subject.errors[:enum_options]).to include("must all be strings")
         end
 
         it 'is valid with array of strings' do
-          subject.enum_options = ['Option 1', 'Option 2']
+          subject.enum_options = [ 'Option 1', 'Option 2' ]
           subject.valid?
           expect(subject).to be_valid
         end

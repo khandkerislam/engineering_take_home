@@ -45,9 +45,9 @@ RSpec.describe BuildingCustomValue, type: :model do
     end
 
     context 'when field_type is list' do
-      let(:enum_options) { ["Option 1", "Option 2", "Option 3"] }
-      subject { 
-        build(:building_custom_value, :list_value, 
+      let(:enum_options) { [ "Option 1", "Option 2", "Option 3" ] }
+      subject {
+        build(:building_custom_value, :list_value,
           custom_field: create(:custom_field, :list_type, enum_options: enum_options)
         )
       }
