@@ -13,6 +13,7 @@ A full-stack web application built with React and Ruby on Rails that enables rea
 ```
 docker compose up --build
 ```
+Server is running at http://localhost:3000/
 
 ## Configuration
 
