@@ -21,6 +21,13 @@ For convenience, source the alias to access the Rails container:
 ```
 source .aliases
 ```
+
+Seed the database with:
+
+```
+perchweb rails db:seed
+```
+
 Run yarn, rails, and othercommands on the Rails container with:
 
 ```
