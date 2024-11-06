@@ -1,8 +1,7 @@
 class Api::ZipCodesController < ApplicationController
-
-  def index 
+  def index
     @zip_codes = ZipCode.all.includes(:state)
-    render json: @zip_codes, include: [:state]
+    render json: @zip_codes, include: [ :state ]
   end
 
   def show
@@ -17,4 +16,4 @@ class Api::ZipCodesController < ApplicationController
       }
     }
   end
-end 
+end
