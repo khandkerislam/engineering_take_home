@@ -1,7 +1,11 @@
 import React from 'react'
-import HelloWorld from './HelloWorld'
+import Clients from './clients/Clients'
+
 export default function App() {
+
   return (
-    <HelloWorld />
+    <div>
+      <Clients />
+    </div>
   )
 } 
