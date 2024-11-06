@@ -1,145 +1,227 @@
-# Perchwell Engineering Take-Home
+# Perchwell Real Estate API
 
-This is the base repository for the SWE full-stack technical assessment take-home for candidates applying to Perchwell.
+A full-stack web application built with React and Ruby on Rails that enables real estate companies to manage their building portfolios. Features include:
 
-# Background Information
+- Custom field configuration for each client's unique building attributes
+- RESTful API endpoints for building creation, updates, and retrieval
+- React components for intuitive building management
+- PostgreSQL database with associations between clients, buildings, and custom fields
 
-Thank you for your interest in Perchwell and for taking the time to complete this technical assessment. Our tech stack consists of React, Coffeescript, and Ruby on Rails.
 
-We estimate you will need approximately 3 hours to complete the following exercise.
-
-# The Deliverable
-
-Please fork or clone this repository to your personal GitHub account. If the repository is public, send it back to us. If it is private, we will send you a list of GitHub handles needing access to your work.
-
-The main framework will be Rails and SQL.
-
-We will review the clarity of your documentation, the correctness of the application, the readability of the code, and the organization within your codebase.
-
-# The Setup
-
-This repository was setup using the latest Ruby on Rails via:
+## Installation
 
 ```
-rails new engineering_take_home -d postgresql  -j=esbuild -T
+docker compose up --build
 ```
 
-Once you've downloaded the project the easiest way to run it is with Docker. After installing docker locally:
+## Configuration
+
+For convenience, source the alias to access the Rails container:   
 
 ```
-docker compose build
-docker compose up
+source .aliases
 ```
-
-If everything works correctly, then you should be able to hit http://localhost:3000/ and see a welcome page with a simple React component.
-
-If you want to run specs, you can run Rspec with from within the Docker container:
+Run yarn, rails, and othercommands on the Rails container with:
 
 ```
-RAILS_ENV=test bundle exec rspec
+perchweb rails <command>
+perchweb yarn <command>
+perchweb bundle <command>
 ```
-
-# The Ask
-
-Create a Rails app with the following components:
-* SQL database
-* Backend logic
-* External APIs
-
-# Background
-
-We are building a platform that stores a list of physical buildings. Stakeholders will interact with our application via API.  We will have two types of stakeholders:
-* Clients that submit and create / edit buildings that they own
-* External clients that read all buildings from an API
-
-Additionally, we want to allow functionality that allows clients to have custom fields to their buildings. For example, some clients may want their buildings to have an attribute that designates if a building used to be a church.
-
-We do not want clients to modify this custom field configuration; it should be left purely within the database.
-
-# SQL Database
-
-Your database schema should support the following main objects at a minimum:
-
-## Clients
-
-* Clients are the main application clients. They submit buildings to the API and have the buildings associated with them.
-* Has a name associated with the client
-
-## Buildings
-
-* Buildings are used to represent physical buildings
-* Has basic address info: Address / State / Zip etc
-* Additional information provided by Custom Fields
-* Associated with Client
-
-## Custom Field configuration
-* Custom Fields are associated with a single client
-* Custom Fields can be one of 3 types: number, freeform, or enum
-  * Number fields can be any decimal number (e.g., Number of bathrooms: 2.5)
-  * Freeform fields are strings (e.g., Living room color: “Blue”)
-  * Enum is a choice of strings (e.g., Type of walkway: “Brick, Concrete, or None”)
-
-Seed the clients table with 5 clients. You can name the clients anything you wish. 
-
-Seed a small sample of custom fields for each client.
-
-Seed a small sample of buildings for each client that contain values for the custom fields.
-
-Please create indexes that make sense for the application.
-
-# External APIs:
-
-Note: We do NOT need to worry about Authentication for this exercise. Consider all the APIs to be ‘open’ for now.
-
-Create the following API Endpoints to facilitate the following actions:
-
-From a client:
-
-## Create Building
-* Create a single Building associated with a client
-* Should include as many fields as needed
-* Return an error and do not save if any values were sent that were incorrect.
-* Example: Send a string as a number field or a key that doesn't work with the custom fields
-* Return a success message if it is saved correctly
-
-## Edit Building
-* Same constraints as creating but editing an existing building by targeting its primary id
-
-## Read Buildings
-* Returns all the buildings
-* Must support basic pagination functionality
-* Returns the address information associated with each building
-* Returns the client's name
-* Returns the custom fields associated with each building, even if they are empty
-
-Simplified read building output:
+Run tests on the test container with:
 
 ```
+perchtest yarn test
+perchtest rspec
+```
+
+## API Reference
+
+<details>
+<summary><strong>Buildings API</strong></summary>
+
+### `GET /api/buildings`
+
+Retrieves a paginated list of buildings for a specific client, including custom field values.
+
+**Query Parameters:**
+- `client_id` (integer, required): ID of the client whose buildings to retrieve
+- `page` (integer, optional): Page number for pagination
+- `per_page` (integer, optional): Number of buildings per page (default: 5)
+
+**Response:**
+```json
 {
-  "status": "success",
   "buildings": [
     {
-      "id": "1",
-      "client_name": "rock_walls_only",
-      "address": "45 Main St",
-      "rock_wall_size": "15",
-      "rock_wall_length": "26"
-    },
-    {
-      "id": "2",
-      "client_name": "brick_walls_only",
-      "address": "123 Side St",
-      "brick_color": "red",
-      "brick_count": ""
+      "id": 1,
+      "client_name": "Example Client",
+      "address": "123 Main St",
+      "custom_field_1": "value1",
+      "custom_field_2": "value2"
     }
-  ]
+  ],
+  "meta": {
+    "current_page": 1,
+    "total_pages": 10,
+    "total_count": 50,
+    "per_page": 5
+  }
 }
 ```
 
-# React Frontend
-The frontend portion of this project is located here: `/app/javascript/components`
+**Status Codes:**
+- `200 OK`: Successfully retrieved buildings
+- `400 Bad Request`: No client_id provided
+- `404 Not Found`: Client not found
 
-* Write an API call to fetch all building data and display each building in a card component written in React.
-* Create an interface using React components to create a new building and edit an existing building, complete with the necessary API calls.
-* Proper functionality should be the main focus here. Any styling choices are bonus points but it should be readable so add margin and padding for spacing as needed.
-* This should demonstrate a competent use of React hooks to manage state.
+### `GET /api/buildings/:id`
+
+Retrieves a specific building by ID.
+
+**Status Codes:**
+- `200 OK`: Successfully retrieved building
+- `404 Not Found`: Building not found
+
+### `POST /api/buildings`
+
+Creates a new building with associated custom field values.
+
+**Request Body:**
+```json
+{
+  "building": {
+    "client_id": 1,
+    "address": "123 Main St",
+    "zip_code_id": 12345,
+    "custom_values": {
+      "custom_field_1": "value1",
+      "custom_field_2": "value2"
+    }
+  }
+}
+```
+
+**Status Codes:**
+- `201 Created`: Successfully created building
+- `422 Unprocessable Entity`: Validation errors
+
+### `PUT /api/buildings/:id`
+
+Updates an existing building and its custom field values.
+
+**Request Body:**
+```json
+{
+  "building": {
+    "address": "124 Main St",
+    "zip_code_id": 12345,
+    "custom_values": {
+      "custom_field_1": "updated_value1",
+      "custom_field_2": "updated_value2"
+    }
+  }
+}
+```
+
+**Status Codes:**
+- `200 OK`: Successfully updated building
+- `404 Not Found`: Building not found
+- `422 Unprocessable Entity`: Validation errors
+</details>
+
+<details>
+<summary><strong>Clients API</strong></summary>
+
+### `GET /api/clients`
+
+Retrieves a paginated list of clients with their associated buildings and custom fields.
+
+**Query Parameters:**
+- `page` (integer, optional): Page number for pagination
+- `per_page` (integer, optional): Number of clients per page (default: 1)
+
+**Response:**
+```json
+{
+  "clients": [
+    {
+      "id": 1,
+      "name": "Example Client",
+      "buildings": [
+        {
+          "id": 1,
+          "address": "123 Main St",
+          // ... other building attributes
+        }
+      ],
+      "custom_fields": [
+        {
+          "id": 1,
+          "name": "field_name",
+          // ... other custom field attributes
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "current_page": 1,
+    "total_pages": 10,
+    "total_count": 50,
+    "per_page": 1
+  }
+}
+```
+
+**Status Codes:**
+- `200 OK`: Successfully retrieved clients
+- `500 Internal Server Error`: Failed to load clients
+</details>
+
+<details>
+<summary><strong>Zip Codes API</strong></summary>
+
+### `GET /api/zip_codes`
+
+Retrieves a list of all zip codes with their associated state information.
+
+**Response:**
+```json
+[
+  {
+    "id": 1,
+    "code": "12345",
+    "city": "Example City",
+    "state": {
+      "id": 1,
+      "name": "Example State"
+    }
+  }
+]
+```
+
+**Status Codes:**
+- `200 OK`: Successfully retrieved zip codes
+
+### `GET /api/zip_codes/:id`
+
+Retrieves a specific zip code by ID with its state information.
+
+**Response:**
+```json
+{
+  "id": 1,
+  "code": "12345",
+  "city": "Example City",
+  "state": {
+    "id": 1,
+    "name": "Example State"
+  }
+}
+```
+
+**Status Codes:**
+- `200 OK`: Successfully retrieved zip code
+- `404 Not Found`: Zip code not found
+</details>
+
