@@ -20,4 +20,17 @@ class Building < ApplicationRecord
             end
         end
     end
+
+    def create_custom_values(custom_values)
+        return unless custom_values.present?
+
+        client.custom_fields.each do |custom_field|
+            next unless custom_values[custom_field.name].present?
+            
+            building_custom_values.create!(
+                custom_field: custom_field,
+                value: custom_values[custom_field.name]
+            )
+        end
+    end
 end
