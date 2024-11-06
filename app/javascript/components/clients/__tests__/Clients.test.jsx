@@ -1,51 +1,41 @@
-import React from 'react'
-import { render, screen } from '@testing-library/react'
-import Clients from '../Clients'
-import { useClients } from '../../../hooks/useClients'
-
-jest.mock('../../../hooks/useClients')
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import Clients from '../Clients';
 
 describe('Clients', () => {
-  const mockClients = [
-    {
-      id: 1,
-      name: 'Test Client 1',
-      buildings: ['building1', 'building2'],
-      custom_fields: ['field1', 'field2']
-    },
-    {
-      id: 2,
-      name: 'Test Client 2',
-      buildings: ['building3'],
-      custom_fields: null
-    }
-  ]
+  const mockClient = {
+    id: 1,
+    name: 'Test Client',
+    buildings: [{ id: 1 }]
+  };
 
-  it('renders loading state', () => {
-    useClients.mockReturnValue({ loading: true, clients: [], error: null })
-    render(<Clients />)
-    expect(screen.getByText('Loading clients...')).toBeInTheDocument()
-  })
+  const mockProps = {
+    clients: [mockClient],
+    onSelectClient: jest.fn(),
+    setAction: jest.fn()
+  };
 
-  it('renders error state', () => {
-    useClients.mockReturnValue({ loading: false, clients: [], error: 'Failed to fetch' })
-    render(<Clients />)
-    expect(screen.getByText('Error: Failed to fetch')).toBeInTheDocument()
-  })
+  it('renders client name and buttons', () => {
+    render(<Clients {...mockProps} />);
+    
+    expect(screen.getByText('Test Client')).toBeInTheDocument();
+    expect(screen.getByText('Buildings (1)')).toBeInTheDocument();
+    expect(screen.getByText('Add Building')).toBeInTheDocument();
+  });
 
-  it('renders clients grid with correct data', () => {
-    useClients.mockReturnValue({ loading: false, clients: mockClients, error: null })
-    render(<Clients />)
+  it('handles Buildings button click correctly', () => {
+    render(<Clients {...mockProps} />);
+    
+    fireEvent.click(screen.getByText('Buildings (1)'));
+    expect(mockProps.setAction).toHaveBeenCalledWith(0);
+    expect(mockProps.onSelectClient).toHaveBeenCalledWith(mockClient);
+  });
 
-    expect(screen.getByText('Clients')).toBeInTheDocument()
-
-    expect(screen.getByText('Test Client 1')).toBeInTheDocument()
-    expect(screen.getByText('Test Client 2')).toBeInTheDocument()
-
-    expect(screen.getByText('Buildings: 2')).toBeInTheDocument()
-    expect(screen.getByText('Buildings: 1')).toBeInTheDocument()
-
-    expect(screen.getByText('Custom Fields: 2')).toBeInTheDocument()
-    expect(screen.getByText('Custom Fields: 0')).toBeInTheDocument()
-  })
-}) 
+  it('handles Add Building button click correctly', () => {
+    render(<Clients {...mockProps} />);
+    
+    fireEvent.click(screen.getByText('Add Building'));
+    expect(mockProps.setAction).toHaveBeenCalledWith(1);
+    expect(mockProps.onSelectClient).toHaveBeenCalledWith(mockClient);
+  });
+}); 

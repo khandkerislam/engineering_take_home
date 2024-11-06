@@ -1,28 +1,46 @@
-import React from 'react'
-import { useClients } from '../../hooks/useClients'
+import React from 'react';
+import './Clients.css';
+export default function Clients({ clients, onSelectClient, setAction }) {
 
-export default function Clients() {
-  const { clients, loading, error } = useClients()
-  console.log('All clients:', clients)  // This will log the entire clients array
-
-  if (loading) return <div>Loading clients...</div>
-  if (error) return <div>Error: {error}</div>
+  const handleClientClick = (client, action ) => {
+    setAction(action);
+    onSelectClient(client);
+  };
 
   return (
     <div className="clients">
-      <h1>Clients</h1>
+      <h1 className="clients-title">Clients</h1>
       
       <div className="clients-grid">
         {clients.map(client => (
-          <div key={client.id} className="client-card">
+          <div 
+            key={client.id} 
+            className="client-card"
+            role="button"
+            tabIndex={0}
+          >
             <h2>{client.name}</h2>
             <div className="client-details">
-              <p>Buildings: {client.buildings.length}</p>
-              <p>Custom Fields: {client.custom_fields?.length || 0}</p>
+                <button 
+                    onClick={(e) => {
+                    e.stopPropagation();
+                    handleClientClick(client, 0);
+                    }}
+                >
+                    Buildings ({client.buildings.length})
+                </button>
+                <button 
+                    onClick={(e) => {
+                    e.stopPropagation();
+                    handleClientClick(client, 1);
+                    }}
+                >
+                    Add Building
+                </button>
             </div>
           </div>
         ))}
       </div>
     </div>
-  )
+  );
 } 
