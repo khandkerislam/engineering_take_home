@@ -4,9 +4,18 @@ module Api
 
     def index
       return render json: { error: 'No client_id provided' }, status: :bad_request if params[:client_id].blank?
+      
       client = Client.find(params[:client_id])      
-      @buildings = client.buildings
-      render json: @buildings
+      @buildings = client.buildings.includes(:building_custom_values, :client)
+      
+      render json: @buildings.map { |building|
+        {
+          id: building.id,
+          client_name: building.client.name,
+          address: building.full_address,
+          **building.building_custom_values.to_h { |cv| [cv.custom_field.name, cv.value] }
+        }
+      }
     rescue ActiveRecord::RecordNotFound
       render json: { error: 'Client not found' }, status: :not_found
     end

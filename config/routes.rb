@@ -11,6 +11,8 @@ Rails.application.routes.draw do
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
   namespace :api do
+    resources :zip_codes, only: [:index]
+    resources :clients, only: [:index]
     resources :buildings, only: [:index, :create, :update]
   end
 
