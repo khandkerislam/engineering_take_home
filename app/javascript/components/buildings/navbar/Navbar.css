@@ -1,0 +1,14 @@
+.navbar {
+    padding: 1rem;
+    background-color: white;
+    border-bottom: 1px solid #eee;
+  }
+
+  .home-link {
+    color: #0070f3;
+    text-decoration: none;
+  }
+
+  .home-link:hover {
+    text-decoration: underline;
+  }

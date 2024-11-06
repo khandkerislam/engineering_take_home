@@ -1,11 +1,11 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import BuildingNew from '../BuildingNew';
+import BuildingForm from '../BuildingForm';
 import { useZipCodes } from '../../../hooks/useZipCodes';
 
 jest.mock('../../../hooks/useZipCodes');
 
-describe('BuildingNew', () => {
+describe('BuildingForm', () => {
   const mockClient = {
     id: 1,
     name: 'Test Client',
@@ -27,7 +27,7 @@ describe('BuildingNew', () => {
   });
 
   it('renders the form correctly', () => {
-    render(<BuildingNew client={mockClient} />);
+    render(<BuildingForm client={mockClient} />);
     
     expect(screen.getByLabelText('Address:')).toBeInTheDocument();
     expect(screen.getByLabelText('Zip Code:')).toBeInTheDocument();

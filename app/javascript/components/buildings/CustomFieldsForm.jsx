@@ -1,22 +1,30 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
-export default function CustomFieldsForm({ customFields, onSubmit }) {
-  const [customValues, setCustomValues] = useState({})
+export default function CustomFieldsForm({ customFields, initialValues = {}, onSubmit }) {
+  const [customValues, setCustomValues] = useState(initialValues)
+
+  useEffect(() => {
+    setCustomValues(initialValues)
+  }, [initialValues])
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setCustomValues(prev => ({
-      ...prev,
-      [name]: value
-    }))
-    onSubmit({ 
+    const { name, value, type } = e.target
+    
+    // Convert to number for number fields
+    const processedValue = type === 'number' ? 
+      (value === '' ? '' : parseFloat(value)) : value;
+    
+    const newValues = {
       ...customValues,
-      [name]: value
-    })
+      [name]: processedValue
+    }
+    setCustomValues(newValues)
+    onSubmit(newValues)
   }
-
+  console.log(customValues)
   const renderField = (field) => {
-    console.log(field)
+    const value = customValues[field.name] ?? '' // Use nullish coalescing
+    
     switch (field.field_type) {
       case 'number':
         return (
@@ -24,8 +32,9 @@ export default function CustomFieldsForm({ customFields, onSubmit }) {
             id={field.name}
             type="number"
             name={field.name}
-            value={customValues[field.name] || ''}
+            value={value}
             onChange={handleChange}
+            step="any" // Allow decimals
           />
         )
       
@@ -38,10 +47,10 @@ export default function CustomFieldsForm({ customFields, onSubmit }) {
                   type="radio"
                   name={field.name}
                   value={option}
-                  checked={customValues[field.name] === option}
+                  checked={value === option}
                   onChange={handleChange}
                 />
-                {option}
+                <span>{option}</span>
               </label>
             ))}
           </div>
@@ -53,7 +62,7 @@ export default function CustomFieldsForm({ customFields, onSubmit }) {
             id={field.name}
             type="text"
             name={field.name}
-            value={customValues[field.name] || ''}
+            value={value}
             onChange={handleChange}
           />
         )
@@ -70,4 +79,4 @@ export default function CustomFieldsForm({ customFields, onSubmit }) {
       ))}
     </div>
   )
-} 
+}

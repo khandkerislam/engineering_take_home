@@ -1,17 +1,30 @@
 import React, { useState } from 'react'
 import { useZipCodes } from '../../hooks/useZipCodes'
 import CustomFieldsForm from './CustomFieldsForm'
-
-export default function BuildingNew({ client }) {
-  const [building, setBuilding] = useState(() => ({
-    address: '',
-    zip_code_id: '',
-    client_id: client.id,
-    custom_values: {}
-  }))
+import './BuildingForm.css'
+export default function BuildingForm({ client, existingBuilding = null }) {
+  const isEditMode = existingBuilding !== null
+  const [building, setBuilding] = useState(() => {
+    if (existingBuilding) {
+      const { id, client_name, address, ...customFields } = existingBuilding
+      return {
+        id,
+        address: address || '',
+        zip_code_id: '', 
+        client_id: client.id,
+        custom_values: customFields || {}
+      }
+    }
+    
+    return {
+      address: '',
+      zip_code_id: '',
+      client_id: client.id,
+      custom_values: {}
+    }
+  })
 
   const [submitError, setSubmitError] = useState(null)
-
   const { zipCodes, loading, error } = useZipCodes()
 
   const handleSubmit = async (e) => {
@@ -19,14 +32,17 @@ export default function BuildingNew({ client }) {
     setSubmitError(null)
     
     try {
-      const response = await fetch('/api/buildings', {
-        method: 'POST',
+      const url = isEditMode 
+        ? `/api/buildings/${existingBuilding?.id}` 
+        : '/api/buildings'
+
+      const response = await fetch(url, {
+        method: isEditMode ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ building: { ...building } })
       })
-
       if (response.ok) {
         setBuilding({
           address: '',
@@ -38,7 +54,7 @@ export default function BuildingNew({ client }) {
         setSubmitError(data.errors)
       }
     } catch (error) {
-      setSubmitError('Failed to create building')
+      setSubmitError(`Failed to ${isEditMode ? 'update' : 'create'} building`)
     }
   }
 
@@ -55,12 +71,12 @@ export default function BuildingNew({ client }) {
 
   return (
     <div>
-      <h1>New Building</h1>
+      <h1>{isEditMode ? 'Edit Building' : 'New Building'}</h1>
       {submitError && (
         <div className="error">{submitError}</div>
       )}
       <form onSubmit={handleSubmit}>
-        <div>
+        <div className="form-group">
           <label htmlFor="address">Address:</label>
           <input
             id="address"
@@ -71,7 +87,7 @@ export default function BuildingNew({ client }) {
             required
           />
         </div>
-        <div>
+        <div className="form-group">
           <label htmlFor="zip_code_id">Zip Code:</label>
           <select 
             id="zip_code_id"
@@ -91,6 +107,7 @@ export default function BuildingNew({ client }) {
         {client.custom_fields?.length > 0 && (
           <CustomFieldsForm 
             customFields={client.custom_fields}
+            initialValues={building.custom_values}
             onSubmit={(values) => {
               setBuilding(prev => ({
                 ...prev,
@@ -99,7 +116,9 @@ export default function BuildingNew({ client }) {
             }}
           />
         )}
-        <button type="submit">Create Building</button>
+        <button type="submit" className="submit-button">
+          {isEditMode ? 'Update' : 'Create'} Building
+        </button>
       </form>
     </div>
   )
