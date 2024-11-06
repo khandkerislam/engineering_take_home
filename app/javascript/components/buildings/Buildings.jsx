@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { useBuildings } from '../../hooks/useBuildings';
 import BuildingForm from './BuildingForm';
 import './Buildings.css';
+import Pagination from '../shared/Pagination';
 
 export default function Buildings({ client }) {
-  const { buildings, loading, error } = useBuildings(client.id);
+  const { buildings, loading, error, pagination, fetchPage } = useBuildings(client.id);
   const [editBuilding, setEditBuilding] = useState(null)
 
   const getBuildingCustomFields = (building) => {
@@ -60,6 +61,13 @@ export default function Buildings({ client }) {
           </div>
         ))}
       </div>
+      {pagination.totalPages > 1 && (
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          onPageChange={fetchPage}
+        />
+      )}
     </div>
   )
-}   
+}

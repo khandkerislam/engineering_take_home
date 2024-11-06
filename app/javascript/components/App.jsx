@@ -6,7 +6,7 @@ import { useClients } from '../hooks/useClients';
 import Navbar from './buildings/navbar/Navbar';
 
 export default function App() {
-  const { clients, loading, error } = useClients();
+  const { clients, loading, error, pagination, fetchPage } = useClients();
   const [selectedClient, setSelectedClient] = useState(null);
   const [action, setAction] = useState(0);
 
@@ -29,6 +29,8 @@ export default function App() {
       ) : (
         <Clients 
           clients={clients} 
+          pagination={pagination}
+          fetchPage={fetchPage}
           onSelectClient={setSelectedClient}
           setAction={setAction}
         />

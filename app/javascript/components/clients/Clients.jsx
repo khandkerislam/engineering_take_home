@@ -1,7 +1,7 @@
 import React from 'react';
 import './Clients.css';
-export default function Clients({ clients, onSelectClient, setAction }) {
-
+import Pagination from '../shared/Pagination';
+export default function Clients({ clients, onSelectClient, setAction, pagination, fetchPage }) {
   const handleClientClick = (client, action ) => {
     setAction(action);
     onSelectClient(client);
@@ -41,6 +41,13 @@ export default function Clients({ clients, onSelectClient, setAction }) {
           </div>
         ))}
       </div>
+      {pagination.totalPages > 1 && (
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          onPageChange={fetchPage}
+        />
+      )}
     </div>
   );
 } 
